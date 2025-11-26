@@ -1,5 +1,3 @@
-aiogram==3.0.0b7
-pandas
-openpyxl
-duckduckgo_search
-requests
+pyTelegramBotAPI
+Flask
+gunicorn
