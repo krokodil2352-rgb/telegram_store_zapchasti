@@ -1,1 +1,3 @@
-https://mosavtozapchasti.onrender.com/8028772930:AAHBMCojrt9h9faF1-SvtO524WG_siRNyPk
+pyTelegramBotAPI
+Flask
+gunicorn
