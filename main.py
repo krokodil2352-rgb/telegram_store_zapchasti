@@ -1,34 +1,29 @@
+import os
 import telebot
 from flask import Flask, request
 
-TOKEN = "8028772930:AAHBMCojrt9h9faF1-SvtO524WG_siRNyPk"
+TOKEN = os.getenv("BOT_TOKEN")  # переменная окружения
+if not TOKEN:
+    raise RuntimeError("BOT_TOKEN not set")
 
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    text = (
-        "Добро пожаловать в Алёшкины АвтоСокровища!\n\n"
-        "Здесь вы можете:\n"
-        "• Найти автозапчасти\n"
-        "• Выполнить VIN-подбор\n"
-        "• Узнать цену и наличие\n"
-        "• Добавить товары в корзину\n\n"
-        "Введите название детали или номер запчасти."
-    )
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, "Привет — бот запущен!")
 
-@server.route('/' + TOKEN, methods=['POST'])
-def getMessage():
-    bot.process_new_updates([
-        telebot.types.Update.de_json(
-            request.stream.read().decode("utf-8")
-        )
-    ])
+# Webhook endpoint
+@server.route('/webhook', methods=['POST'])
+def telegram_webhook():
+    json_str = request.get_data(as_text=True)
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
     return "OK", 200
 
-@server.route("/", methods=['GET'])
+@server.route('/', methods=['GET'])
 def index():
-    return "Бот работает!", 200
+    return "Бот живёт", 200
 
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
